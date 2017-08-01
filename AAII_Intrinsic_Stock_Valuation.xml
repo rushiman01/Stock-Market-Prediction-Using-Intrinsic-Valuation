@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="7.5.003">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="7.5.003" expanded="true" name="Process">
+    <process expanded="true">
+      <operator activated="true" class="retrieve" compatibility="7.5.003" expanded="true" height="68" name="Retrieve AAII (Revised Attributes) 20140530.XLS" width="90" x="112" y="34">
+        <parameter key="repository_entry" value="../data/AAII (Revised Attributes) DATA 20150430"/>
+      </operator>
+      <operator activated="true" class="subprocess" compatibility="7.5.003" expanded="true" height="82" name="Data Preprocessing" width="90" x="45" y="136">
+        <process expanded="true">
+          <operator activated="false" class="filter_examples" compatibility="7.5.003" expanded="true" height="103" name="Filter Examples" width="90" x="45" y="442">
+            <list key="filters_list">
+              <parameter key="filters_entry_key" value="smg_desc.does_not_equal.07 - Financial"/>
+              <parameter key="filters_entry_key" value="img_desc.does_not_equal.0933 - Real Estate Operations"/>
+            </list>
+            <description align="center" color="green" colored="true" width="126">Remove Financial and Real Estate</description>
+          </operator>
+          <operator activated="true" class="filter_examples" compatibility="7.5.003" expanded="true" height="103" name="Filter Examples (2)" width="90" x="112" y="34">
+            <list key="filters_list">
+              <parameter key="filters_entry_key" value="Market Cap Q1.ge.50"/>
+              <parameter key="filters_entry_key" value="Market Cap Q1.le.5000"/>
+            </list>
+            <description align="center" color="green" colored="true" width="126">Implement AAII Screen for Market Cap</description>
+          </operator>
+          <operator activated="true" class="filter_examples" compatibility="7.5.003" expanded="true" height="103" name="Filter Examples (3)" width="90" x="246" y="34">
+            <list key="filters_list">
+              <parameter key="filters_entry_key" value="Price.le.1000"/>
+              <parameter key="filters_entry_key" value="Price.ge.2\.5"/>
+              <parameter key="filters_entry_key" value="Volume--Average Monthly 3m.ge.10"/>
+            </list>
+            <description align="center" color="green" colored="true" width="126">Filter on Price and Volume</description>
+          </operator>
+          <operator activated="true" class="select_attributes" compatibility="7.5.003" expanded="true" height="82" name="Select Attributes (3)" width="90" x="447" y="34">
+            <parameter key="attribute_filter_type" value="subset"/>
+            <parameter key="attributes" value="Book value/share Q1|Company name|Current ratio Q1|Dividend Q1|EPS Est Q0|Industry|Market Cap Q1|PE|Price|Quick ratio Q1|Sector|Ticker|Valuation--P/Avg SPS|Valuation--P/SPS|Volume--Average Monthly 3m"/>
+          </operator>
+          <operator activated="false" class="filter_examples" compatibility="7.5.003" expanded="true" height="103" name="Filter Examples (5)" width="90" x="112" y="748">
+            <list key="filters_list">
+              <parameter key="filters_entry_key" value="ADR/ADS Stock.equals.false"/>
+            </list>
+            <description align="center" color="green" colored="true" width="126">Remove ADRs</description>
+          </operator>
+          <operator activated="false" class="generate_attributes" compatibility="7.5.003" expanded="true" height="82" name="Generate Attributes (2)" width="90" x="581" y="442">
+            <list key="function_descriptions">
+              <parameter key="CALCED PFCPS" value="price/fcfps_12m"/>
+            </list>
+            <description align="center" color="green" colored="true" width="126">Calculate Price/Free Cash Flow per Share (many missing in original data)</description>
+          </operator>
+          <operator activated="false" class="replace_infinite_values" compatibility="7.5.003" expanded="true" height="103" name="Replace Infinite Values" width="90" x="715" y="442">
+            <parameter key="attribute_filter_type" value="single"/>
+            <parameter key="attribute" value="CALCED PFCPS"/>
+            <list key="columns">
+              <parameter key="CALCED PFCPS" value="zero"/>
+            </list>
+          </operator>
+          <operator activated="false" class="select_attributes" compatibility="7.5.003" expanded="true" height="82" name="Select Attributes" width="90" x="849" y="442">
+            <parameter key="attribute_filter_type" value="subset"/>
+            <parameter key="attributes" value="ticker|price|mktcap|fcfps_y5|fcfps_y4|fcfps_y3|fcfps_y2|fcfps_y1|fcfps_12m|company|CALCED PFCPS"/>
+            <description align="center" color="green" colored="true" width="126">Select all attributes to use</description>
+          </operator>
+          <operator activated="false" class="generate_attributes" compatibility="7.5.003" expanded="true" height="82" name="Generate Attributes (3)" width="90" x="246" y="748">
+            <list key="function_descriptions">
+              <parameter key="Earnings Growth 01" value="[EPS Cont-Growth 12m]/[EPS Cont-Growth 1yr]"/>
+              <parameter key="Earnings Growth 02" value="[EPS Cont-Growth 1yr]/[EPS Cont-Growth from Y3 to Y2]"/>
+              <parameter key="Earnings Growth 03" value="[EPS Cont-Growth from Y3 to Y2]/[EPS Cont-Growth from Y4 to Y3]"/>
+              <parameter key="RSI Ratio" value="[Relative Strength 26 week]/[Ind. Relative Strength 26 week]"/>
+            </list>
+          </operator>
+          <operator activated="false" class="replace_infinite_values" compatibility="7.5.003" expanded="true" height="103" name="Replace Infinite Values (2)" width="90" x="179" y="544">
+            <parameter key="attributes" value="RSI Ratio|Earnings Growth 03|Earnings Growth 02|Earnings Growth 01"/>
+            <list key="columns">
+              <parameter key="Earnings Growth 01" value="missing"/>
+              <parameter key="Earnings Growth 02" value="missing"/>
+              <parameter key="Earnings Growth 03" value="missing"/>
+              <parameter key="RSI Ratio" value="missing"/>
+            </list>
+          </operator>
+          <operator activated="false" class="replace_infinite_values" compatibility="7.5.003" expanded="true" height="103" name="Replace Infinite Values (3)" width="90" x="380" y="697">
+            <parameter key="attributes" value="RSI Ratio|Earnings Growth 03|Earnings Growth 02|Earnings Growth 01"/>
+            <list key="columns">
+              <parameter key="Earnings Growth 01" value="missing"/>
+              <parameter key="Earnings Growth 02" value="missing"/>
+              <parameter key="Earnings Growth 03" value="missing"/>
+              <parameter key="RSI Ratio" value="missing"/>
+            </list>
+            <parameter key="replenish_what" value="negative_infinity"/>
+          </operator>
+          <operator activated="true" class="filter_examples" compatibility="7.5.003" expanded="true" height="103" name="Filter Examples (4)" width="90" x="648" y="34">
+            <parameter key="condition_class" value="no_missing_attributes"/>
+            <list key="filters_list"/>
+            <description align="center" color="green" colored="true" width="126">Filter missing example values</description>
+          </operator>
+          <operator activated="true" class="generate_id" compatibility="7.5.003" expanded="true" height="82" name="Generate ID" width="90" x="849" y="85">
+            <description align="center" color="green" colored="true" width="126">Add ID for Join</description>
+          </operator>
+          <operator activated="true" class="set_role" compatibility="7.5.003" expanded="true" height="82" name="Set Role" width="90" x="1050" y="85">
+            <parameter key="attribute_name" value="Price"/>
+            <parameter key="target_role" value="label"/>
+            <list key="set_additional_roles"/>
+          </operator>
+          <connect from_port="in 1" to_op="Filter Examples (2)" to_port="example set input"/>
+          <connect from_op="Filter Examples (2)" from_port="example set output" to_op="Filter Examples (3)" to_port="example set input"/>
+          <connect from_op="Filter Examples (3)" from_port="example set output" to_op="Select Attributes (3)" to_port="example set input"/>
+          <connect from_op="Select Attributes (3)" from_port="example set output" to_op="Filter Examples (4)" to_port="example set input"/>
+          <connect from_op="Filter Examples (4)" from_port="example set output" to_op="Generate ID" to_port="example set input"/>
+          <connect from_op="Generate ID" from_port="example set output" to_op="Set Role" to_port="example set input"/>
+          <connect from_op="Set Role" from_port="example set output" to_port="out 1"/>
+          <portSpacing port="source_in 1" spacing="0"/>
+          <portSpacing port="source_in 2" spacing="0"/>
+          <portSpacing port="sink_out 1" spacing="0"/>
+          <portSpacing port="sink_out 2" spacing="0"/>
+          <description align="left" color="yellow" colored="true" height="59" resized="true" width="407" x="489" y="277">&lt;br/&gt;Additional attributes from AAII Screen</description>
+          <description align="left" color="orange" colored="true" height="63" resized="true" width="204" x="782" y="309">Instead of ratios perhaps calculate differences?</description>
+        </process>
+      </operator>
+      <operator activated="true" class="multiply" compatibility="7.5.003" expanded="true" height="166" name="Multiply" width="90" x="45" y="340"/>
+      <operator activated="true" class="select_attributes" compatibility="7.5.003" expanded="true" height="82" name="Select Attributes (5)" width="90" x="246" y="136">
+        <parameter key="attribute_filter_type" value="subset"/>
+        <parameter key="attributes" value="Price|id|Book value/share Q1|Current ratio Q1|Dividend Q1|EPS Est Q0|Market Cap Q1|PE|Quick ratio Q1|Valuation--P/Avg SPS|Valuation--P/SPS|Volume--Average Monthly 3m|Buffett Price Growth-EPS Gr.|Buffett Price Growth-Sust. Gr.|Valuation--Avg P/CF|Valuation--Avg P/FCF|Valuation--Avg PE|Valuation--P/CFPS|Valuation--P/FCFPS|Valuation--P/Yield|Valuation--PE|Valuation--PE &amp; Est|Valuation--PEA &amp; Est"/>
+        <description align="center" color="green" colored="true" width="126">Remove Company Name, Ticker</description>
+      </operator>
+      <operator activated="true" class="neural_net" compatibility="7.5.003" expanded="true" height="82" name="Neural Net" width="90" x="380" y="136">
+        <list key="hidden_layers">
+          <parameter key="Layer 01" value="12"/>
+          <parameter key="Layer 02" value="8"/>
+          <parameter key="Layer 03" value="4"/>
+        </list>
+        <parameter key="use_local_random_seed" value="true"/>
+      </operator>
+      <operator activated="true" class="apply_model" compatibility="7.1.001" expanded="true" height="82" name="Apply Model" width="90" x="514" y="136">
+        <list key="application_parameters"/>
+      </operator>
+      <operator activated="true" class="performance_regression" compatibility="7.5.003" expanded="true" height="82" name="Performance NN" width="90" x="648" y="136">
+        <parameter key="absolute_error" value="true"/>
+      </operator>
+      <operator activated="true" class="join" compatibility="7.5.003" expanded="true" height="82" name="Join" width="90" x="648" y="289">
+        <parameter key="join_type" value="outer"/>
+        <list key="key_attributes"/>
+        <parameter key="keep_both_join_attributes" value="true"/>
+        <description align="center" color="green" colored="true" width="126">Add back in Company Name, Ticker</description>
+      </operator>
+      <operator activated="true" class="subprocess" compatibility="7.5.003" expanded="true" height="82" name="NN-Process Model Output" width="90" x="782" y="289">
+        <process expanded="true">
+          <operator activated="true" class="generate_attributes" compatibility="7.5.003" expanded="true" height="82" name="Generate Attributes" width="90" x="45" y="34">
+            <list key="function_descriptions">
+              <parameter key="Percent Difference_NN" value="([prediction(Price)]-Price)/Price"/>
+            </list>
+            <description align="center" color="green" colored="true" width="126">Generate % Return for Ranking&lt;br&gt;[rename for each model]</description>
+          </operator>
+          <operator activated="true" class="sort" compatibility="7.5.003" expanded="true" height="82" name="Sort" width="90" x="179" y="34">
+            <parameter key="attribute_name" value="Percent Difference_NN"/>
+            <parameter key="sorting_direction" value="decreasing"/>
+          </operator>
+          <operator activated="true" class="filter_example_range" compatibility="7.5.003" expanded="true" height="82" name="Filter Example Range" width="90" x="313" y="34">
+            <parameter key="first_example" value="1"/>
+            <parameter key="last_example" value="100"/>
+          </operator>
+          <operator activated="true" class="set_role" compatibility="7.5.003" expanded="true" height="82" name="Set Role (2)" width="90" x="447" y="34">
+            <parameter key="attribute_name" value="Ticker"/>
+            <parameter key="target_role" value="id"/>
+            <list key="set_additional_roles"/>
+          </operator>
+          <connect from_port="in 1" to_op="Generate Attributes" to_port="example set input"/>
+          <connect from_op="Generate Attributes" from_port="example set output" to_op="Sort" to_port="example set input"/>
+          <connect from_op="Sort" from_port="example set output" to_op="Filter Example Range" to_port="example set input"/>
+          <connect from_op="Filter Example Range" from_port="example set output" to_op="Set Role (2)" to_port="example set input"/>
+          <connect from_op="Set Role (2)" from_port="example set output" to_port="out 1"/>
+          <portSpacing port="source_in 1" spacing="0"/>
+          <portSpacing port="source_in 2" spacing="0"/>
+          <portSpacing port="sink_out 1" spacing="0"/>
+          <portSpacing port="sink_out 2" spacing="0"/>
+        </process>
+      </operator>
+      <operator activated="true" class="multiply" compatibility="7.5.003" expanded="true" height="103" name="Multiply NN" width="90" x="916" y="289"/>
+      <operator activated="true" class="order_attributes" compatibility="7.5.003" expanded="true" height="82" name="Reorder Output NN" width="90" x="1050" y="289">
+        <parameter key="attribute_ordering" value="Percent Difference_NN|Company name|Market Cap Q1|Volume--Average Monthly 3m|id"/>
+      </operator>
+      <operator activated="true" class="select_attributes" compatibility="7.5.003" expanded="true" height="82" name="Select Attributes (2)" width="90" x="179" y="697">
+        <parameter key="attribute_filter_type" value="subset"/>
+        <parameter key="attributes" value="Price|% Rank-Volume--Average Daily 10d|EPS Cont-Growth 12m|EPS Cont-Growth 1yr|EPS Cont-Growth from Y3 to Y2|EPS Cont-Growth from Y4 to Y3|EPS Est Q0-Number|Earnings Growth 01|Earnings Growth 02|Earnings Growth 03|Ind. Relative Strength 26 week|Price Change  4 week|Quarterly Surprise-Percent|RSI Ratio|Relative Strength 26 week"/>
+        <description align="center" color="green" colored="true" width="126">Remove Company Name, Ticker</description>
+      </operator>
+      <operator activated="true" class="weight_by_correlation" compatibility="7.5.003" expanded="true" height="82" name="Weight by Correlation" width="90" x="313" y="697">
+        <parameter key="sort_direction" value="descending"/>
+      </operator>
+      <operator activated="true" class="select_attributes" compatibility="7.5.003" expanded="true" height="82" name="Select Attributes (4)" width="90" x="246" y="493">
+        <parameter key="attribute_filter_type" value="subset"/>
+        <parameter key="attributes" value="Price|id|Volume--Average Monthly 3m|Valuation--P/SPS|Valuation--P/Avg SPS|Quick ratio Q1|PE|Market Cap Q1|EPS Est Q0|Dividend Q1|Current ratio Q1|Book value/share Q1"/>
+        <description align="center" color="green" colored="true" width="126">Remove Company Name, Ticker</description>
+      </operator>
+      <operator activated="true" class="linear_regression" compatibility="7.5.003" expanded="true" height="103" name="Linear Regression" width="90" x="380" y="493"/>
+      <operator activated="true" class="apply_model" compatibility="7.1.001" expanded="true" height="82" name="Apply Model (2)" width="90" x="514" y="493">
+        <list key="application_parameters"/>
+      </operator>
+      <operator activated="true" class="performance_regression" compatibility="7.5.003" expanded="true" height="82" name="Performance Linear Reg" width="90" x="648" y="493">
+        <parameter key="absolute_error" value="true"/>
+      </operator>
+      <operator activated="true" class="join" compatibility="7.5.003" expanded="true" height="82" name="Join (2)" width="90" x="648" y="646">
+        <parameter key="join_type" value="outer"/>
+        <list key="key_attributes"/>
+        <parameter key="keep_both_join_attributes" value="true"/>
+        <description align="center" color="green" colored="true" width="126">Add back in Company Name, Ticker</description>
+      </operator>
+      <operator activated="true" class="subprocess" compatibility="7.5.003" expanded="true" height="82" name="LinReg-Process Model Output" width="90" x="782" y="595">
+        <process expanded="true">
+          <operator activated="true" class="generate_attributes" compatibility="7.5.003" expanded="true" height="82" name="Generate Attributes (5)" width="90" x="45" y="34">
+            <list key="function_descriptions">
+              <parameter key="Percent Difference_LinReg" value="([prediction(Price)]-Price)/Price"/>
+            </list>
+            <description align="center" color="green" colored="true" width="126">Generate % Return for Ranking&lt;br&gt;[rename for each model]</description>
+          </operator>
+          <operator activated="true" breakpoints="after" class="sort" compatibility="7.5.003" expanded="true" height="82" name="Sort (4)" width="90" x="179" y="34">
+            <parameter key="attribute_name" value="Percent Difference_LinReg"/>
+            <parameter key="sorting_direction" value="decreasing"/>
+          </operator>
+          <operator activated="true" class="filter_example_range" compatibility="7.5.003" expanded="true" height="82" name="Filter Example Range (3)" width="90" x="313" y="34">
+            <parameter key="first_example" value="1"/>
+            <parameter key="last_example" value="100"/>
+          </operator>
+          <operator activated="true" class="set_role" compatibility="7.5.003" expanded="true" height="82" name="Set Role (4)" width="90" x="447" y="34">
+            <parameter key="attribute_name" value="Ticker"/>
+            <parameter key="target_role" value="id"/>
+            <list key="set_additional_roles"/>
+          </operator>
+          <connect from_port="in 1" to_op="Generate Attributes (5)" to_port="example set input"/>
+          <connect from_op="Generate Attributes (5)" from_port="example set output" to_op="Sort (4)" to_port="example set input"/>
+          <connect from_op="Sort (4)" from_port="example set output" to_op="Filter Example Range (3)" to_port="example set input"/>
+          <connect from_op="Filter Example Range (3)" from_port="example set output" to_op="Set Role (4)" to_port="example set input"/>
+          <connect from_op="Set Role (4)" from_port="example set output" to_port="out 1"/>
+          <portSpacing port="source_in 1" spacing="0"/>
+          <portSpacing port="source_in 2" spacing="0"/>
+          <portSpacing port="sink_out 1" spacing="0"/>
+          <portSpacing port="sink_out 2" spacing="0"/>
+        </process>
+      </operator>
+      <operator activated="true" class="multiply" compatibility="7.5.003" expanded="true" height="103" name="Multiply LinReg" width="90" x="916" y="595"/>
+      <operator activated="true" class="order_attributes" compatibility="7.5.003" expanded="true" height="82" name="Reorder Output LinReg" width="90" x="1050" y="595">
+        <parameter key="attribute_ordering" value="Percent Difference_LinReg|\% Rank-Volume--Average Daily 10d|ADR/ADS Stock|Company name|EPS Cont-Growth 12m|EPS Cont-Growth 1yr|EPS Cont-Growth from Y3 to Y2|EPS Cont-Growth from Y4 to Y3|EPS Est Q0-Number|Ind. Relative Strength 26 week|Market Cap Q1|Price Change  4 week|Quarterly Surprise-Percent|Relative Strength 26 week|Volume--Average Monthly 3m|id"/>
+      </operator>
+      <operator activated="true" class="join" compatibility="7.5.003" expanded="true" height="82" name="Join (3)" width="90" x="1050" y="493">
+        <list key="key_attributes"/>
+        <parameter key="keep_both_join_attributes" value="true"/>
+      </operator>
+      <operator activated="true" class="generate_attributes" compatibility="7.5.003" expanded="true" height="82" name="Generate Attributes (4)" width="90" x="1184" y="493">
+        <list key="function_descriptions">
+          <parameter key="Percent Difference_Combined" value="([Percent Difference_LinReg]+[Percent Difference_NN])/2"/>
+        </list>
+      </operator>
+      <operator activated="true" class="sort" compatibility="7.5.003" expanded="true" height="82" name="Sort (3)" width="90" x="1318" y="493">
+        <parameter key="attribute_name" value="Percent Difference_Combined"/>
+        <parameter key="sorting_direction" value="decreasing"/>
+      </operator>
+      <operator activated="true" class="order_attributes" compatibility="7.5.003" expanded="true" height="82" name="Model Output Combined" width="90" x="1452" y="493">
+        <parameter key="attribute_ordering" value="Percent Difference_Combined|id|Company name|Percent Difference_NN|Percent Difference_LinReg|\% Rank-Volume--Average Daily 10d|ADR/ADS Stock|EPS Cont-Growth 12m|EPS Cont-Growth 1yr|EPS Cont-Growth from Y3 to Y2|EPS Cont-Growth from Y4 to Y3|EPS Est Q0-Number|Ind. Relative Strength 26 week|Market Cap Q1|Price Change  4 week|Quarterly Surprise-Percent|Relative Strength 26 week"/>
+      </operator>
+      <connect from_op="Retrieve AAII (Revised Attributes) 20140530.XLS" from_port="output" to_op="Data Preprocessing" to_port="in 1"/>
+      <connect from_op="Data Preprocessing" from_port="out 1" to_op="Multiply" to_port="input"/>
+      <connect from_op="Multiply" from_port="output 1" to_op="Select Attributes (5)" to_port="example set input"/>
+      <connect from_op="Multiply" from_port="output 2" to_op="Join" to_port="right"/>
+      <connect from_op="Multiply" from_port="output 3" to_op="Select Attributes (4)" to_port="example set input"/>
+      <connect from_op="Multiply" from_port="output 4" to_op="Join (2)" to_port="right"/>
+      <connect from_op="Multiply" from_port="output 5" to_op="Select Attributes (2)" to_port="example set input"/>
+      <connect from_op="Select Attributes (5)" from_port="example set output" to_op="Neural Net" to_port="training set"/>
+      <connect from_op="Neural Net" from_port="model" to_op="Apply Model" to_port="model"/>
+      <connect from_op="Neural Net" from_port="exampleSet" to_op="Apply Model" to_port="unlabelled data"/>
+      <connect from_op="Apply Model" from_port="labelled data" to_op="Performance NN" to_port="labelled data"/>
+      <connect from_op="Performance NN" from_port="performance" to_port="result 1"/>
+      <connect from_op="Performance NN" from_port="example set" to_op="Join" to_port="left"/>
+      <connect from_op="Join" from_port="join" to_op="NN-Process Model Output" to_port="in 1"/>
+      <connect from_op="NN-Process Model Output" from_port="out 1" to_op="Multiply NN" to_port="input"/>
+      <connect from_op="Multiply NN" from_port="output 1" to_op="Reorder Output NN" to_port="example set input"/>
+      <connect from_op="Multiply NN" from_port="output 2" to_op="Join (3)" to_port="left"/>
+      <connect from_op="Reorder Output NN" from_port="example set output" to_port="result 5"/>
+      <connect from_op="Select Attributes (2)" from_port="example set output" to_op="Weight by Correlation" to_port="example set"/>
+      <connect from_op="Weight by Correlation" from_port="weights" to_port="result 3"/>
+      <connect from_op="Select Attributes (4)" from_port="example set output" to_op="Linear Regression" to_port="training set"/>
+      <connect from_op="Linear Regression" from_port="model" to_op="Apply Model (2)" to_port="model"/>
+      <connect from_op="Linear Regression" from_port="exampleSet" to_op="Apply Model (2)" to_port="unlabelled data"/>
+      <connect from_op="Apply Model (2)" from_port="labelled data" to_op="Performance Linear Reg" to_port="labelled data"/>
+      <connect from_op="Performance Linear Reg" from_port="performance" to_port="result 2"/>
+      <connect from_op="Performance Linear Reg" from_port="example set" to_op="Join (2)" to_port="left"/>
+      <connect from_op="Join (2)" from_port="join" to_op="LinReg-Process Model Output" to_port="in 1"/>
+      <connect from_op="LinReg-Process Model Output" from_port="out 1" to_op="Multiply LinReg" to_port="input"/>
+      <connect from_op="Multiply LinReg" from_port="output 1" to_op="Join (3)" to_port="right"/>
+      <connect from_op="Multiply LinReg" from_port="output 2" to_op="Reorder Output LinReg" to_port="example set input"/>
+      <connect from_op="Reorder Output LinReg" from_port="example set output" to_port="result 6"/>
+      <connect from_op="Join (3)" from_port="join" to_op="Generate Attributes (4)" to_port="example set input"/>
+      <connect from_op="Generate Attributes (4)" from_port="example set output" to_op="Sort (3)" to_port="example set input"/>
+      <connect from_op="Sort (3)" from_port="example set output" to_op="Model Output Combined" to_port="example set input"/>
+      <connect from_op="Model Output Combined" from_port="example set output" to_port="result 4"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+      <portSpacing port="sink_result 3" spacing="0"/>
+      <portSpacing port="sink_result 4" spacing="0"/>
+      <portSpacing port="sink_result 5" spacing="0"/>
+      <portSpacing port="sink_result 6" spacing="0"/>
+      <portSpacing port="sink_result 7" spacing="0"/>
+      <description align="left" color="yellow" colored="true" height="153" resized="true" width="768" x="29" y="916">AAII Screen: Driehaus&lt;br&gt;-- Use Neural Network and Linear Regression, default settings&lt;br&gt;-- Compute additional features based on AAII Screen comparisons&lt;br&gt;-- Screen results of each (NN and LinReg) to top 100&lt;br&gt;-- Using Join operator to identify tickers present in all models&lt;br&gt;-- Analyze results of all three: Combined, NN, LinReg&lt;br&gt;-- Also compute Weight by Correlation&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;</description>
+    </process>
+  </operator>
+</process>
